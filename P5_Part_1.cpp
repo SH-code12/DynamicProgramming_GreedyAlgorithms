@@ -1,47 +1,45 @@
-//
+#include <bits/stdc++.h>
 // Created by Shahd Elnassag on 12/29/2024.
 // Problem 5 in Part 1 Dynamic Programming
-//
-#include <bits/stdc++.h>
-
 
 using namespace std;
 
-// Function to Search the length of the Longest Increasing Subsequence
-int getlongestSubsquence(int length, vector<int>& A) {
-    vector<int> subseq;
+// Function to find the length of the Longest Increasing Subsequence
+int findLongestIncreasingSubsequence(int numElements, vector<int>& sequence) {
+    vector<int> subsequence;
 
-    for (int i = 0; i < length; ++i) {
-        // Find the position where A[i] can replace an element in subseq using binary search
-        auto it = lower_bound(subseq.begin(), subseq.end(), A[i]);
+    for (int i = 0; i < numElements; ++i) {
+        // Find the position where sequence[i] can replace an element in subsequence using binary search
+        auto it = lower_bound(subsequence.begin(), subsequence.end(), sequence[i]);
 
-        // If it is not in the subseq array, append it
-        if (it == subseq.end()) {
-            subseq.push_back(A[i]);
+        // If sequence[i] is greater than all elements in subsequence, append it
+        if (it == subsequence.end()) {
+            subsequence.push_back(sequence[i]);
         } else {
-            // Otherwise, replace the element at the found position with A[i]
-            *it = A[i];
+            // Replace the element at the found position with sequence[i]
+            *it = sequence[i];
         }
     }
 
-    // The length of the subseq array will be the length of the longest increasing subsequence
-    return subseq.size();
+    // The size of the subsequence array will be the length of the longest increasing subsequence
+    return subsequence.size();
 }
 
 int main() {
     // Input
-    int length;
-    cin >> length;
-    vector<int> A(length);
-    for (int i = 0; i < length; ++i) {
-        cin >> A[i];
+    int numElements;
+    cin >> numElements;
+    vector<int> sequence(numElements);
+
+    for (int i = 0; i < numElements; ++i) {
+        cin >> sequence[i];
     }
 
     // Find the length of the longest increasing subsequence
-    int result = getlongestSubsquence(length, A);
+    int longestLength = findLongestIncreasingSubsequence(numElements, sequence);
 
     // Output the result
-    cout << result << endl;
+    cout << longestLength << endl;
 
     return 0;
 }
