@@ -4,25 +4,25 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-class Solution {
+class Graph {
 public:
-    bool isPathExists(int nodeCount, vector<vector<int>>& edges, int startNode, int targetNode) {
-        unordered_map<int, vector<int>> adjacencyList;
+    bool isPathExists(int numOfNodes, vector<vector<int>>& edges, int firstNode, int targetNode) {
+        unordered_map<int, vector<int>> graph;
 
         // Building the adjacency list
         for (auto edge : edges) {
-            adjacencyList[edge[0]].push_back(edge[1]);
-            adjacencyList[edge[1]].push_back(edge[0]);
+            graph[edge[0]].push_back(edge[1]);
+            graph[edge[1]].push_back(edge[0]);
         }
 
-        vector<bool> visited(nodeCount, false);
+        vector<bool> visited(numOfNodes, false);
         queue<int> nodesQueue;
-        nodesQueue.push(startNode);
-        visited[startNode] = true;
+        nodesQueue.push(firstNode);
+        visited[firstNode] = true;
 
         int currentNode;
 
-        // check if a path exists from startNode to targetNode
+        // check if a path exists from firstNode to targetNode
         while (!nodesQueue.empty()) {
             currentNode = nodesQueue.front();
             nodesQueue.pop();
@@ -32,33 +32,33 @@ public:
             }
 
             // Explore all neighbors
-            for (auto &neighbor : adjacencyList[currentNode]) {
-                if (!visited[neighbor]) {
-                    visited[neighbor] = true;
-                    nodesQueue.push(neighbor);
+            for (auto &nextNode : graph[currentNode]) {
+                if (!visited[nextNode]) {
+                    visited[nextNode] = true;
+                    nodesQueue.push(nextNode);
                 }
             }
         }
 
-        return false;  // No path found
+        return false;
     }
 };
 
 int main() {
-    Solution solution;
+    Graph graph;
 
     // Test case 1
-    int nodeCount1 = 3;
+    int n1 = 3;
     vector<vector<int>> edges1 = {{0, 1}, {1, 2}, {2, 0}};
     int startNode1 = 0, targetNode1 = 2;
-    bool result1 = solution.isPathExists(nodeCount1, edges1, startNode1, targetNode1);
+    bool result1 = graph.isPathExists(n1, edges1, startNode1, targetNode1);
     cout << (result1 ? "true" : "false") << "\n";
 
     // Test case 2
     int nodeCount2 = 6;
     vector<vector<int>> edges2 = {{0, 1}, {0, 2}, {3, 5}, {5, 4}, {4, 3}};
     int startNode2 = 0, targetNode2 = 5;
-    bool result2 = solution.isPathExists(nodeCount2, edges2, startNode2, targetNode2);
+    bool result2 = graph.isPathExists(nodeCount2, edges2, startNode2, targetNode2);
     cout << (result2 ? "true" : "false") << "\n";
 
     return 0;
