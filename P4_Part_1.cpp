@@ -5,97 +5,80 @@ using namespace std;
 // Shahd Elnassag
 // Problem 4 in Part 1 Dynamic Programming
 
-int maxTreasureValue[1010][31];
-bool itemSelected[1010][31];
-int treasureQuantity[31];
-int goldDepth[31];
-int timeCost[31];
-int totalTime;
-int totalTreasure;
+int memo [1010][31];
+bool picked [1010][31];
+int treasure[31];
+int depth[31];
+int cost[31];
+int w;
+int n;
 
-void initialize(){
-    memset(maxTreasureValue, -1, sizeof(maxTreasureValue));  // Initialize DP table with -1 (uncomputed state)
-    memset(treasureQuantity, 0, sizeof(treasureQuantity));         // Initialize treasure values to 0
-    memset(goldDepth, 0, sizeof(goldDepth));                 // Initialize item depths to 0
-    memset(timeCost, 0, sizeof(timeCost));                   // Initialize item costs to 0
-    memset(itemSelected, false, sizeof(itemSelected));       // Initialize item selection to false
+void init(){
+    memset(memo,-1,sizeof(memo));
+    memset(treasure,0,sizeof(treasure));
+    memset(depth,0,sizeof(depth));
+    memset(cost,0,sizeof(cost));
+    memset(picked, false, sizeof(picked));
 }
 
-int computeMaxTreasure(int remainingTime, int currentItemIndex) {
-    // Base case: if time is negative, terminate
-    if (remainingTime < 0) {
+int dp(int t,int state){
+    //if runs out of time, terminate
+    if(t<0){
         return 0;
     }
-    // Base case: if all items have been considered, terminate
-    if (currentItemIndex == totalTreasure) {
+    //if reach last state
+    if(state==n){
         return 0;
     }
-    // If the result has already been computed, return it
-    if (maxTreasureValue[remainingTime][currentItemIndex] != -1) {
-        return maxTreasureValue[remainingTime][currentItemIndex];
+    //if have been computed
+    if(memo[t][state]!=-1){
+        return memo[t][state];
     }
-
-    // Two choices: either include the current item or exclude it
-    int valueIfIncluded = 0;
-    int valueIfExcluded = 0;
-
-    // If there's enough time to include the current item, calculate the value if included
-    if (remainingTime - timeCost[currentItemIndex] >= 0) {
-        valueIfIncluded = computeMaxTreasure(remainingTime - timeCost[currentItemIndex], currentItemIndex + 1) + treasureQuantity[currentItemIndex];
+    //standard DP 0-1 knapsack
+    int a=0;
+    int b=0;
+    if (t-cost[state]>=0){
+        a = dp(t-cost[state],state+1)+treasure[state];
     }
-    // Calculate the value if the current item is excluded
-    valueIfExcluded = computeMaxTreasure(remainingTime, currentItemIndex + 1);
-
-    // Select the option that gives the maximum value
-    if (valueIfIncluded > valueIfExcluded) {
-        itemSelected[remainingTime][currentItemIndex] = true;
+    b = dp(t,state+1);
+    if(a>b){
+        picked[t][state] = true;
     }
-
-    // Store the result in the DP table
-    int result = max(valueIfIncluded, valueIfExcluded);
-    return maxTreasureValue[remainingTime][currentItemIndex] = result;
+    int ans = max(a,b);
+    return memo[t][state]=ans;
 }
 
-int main() {
-    int timeAvailable;      // Time available for treasure collection
-    bool isFirstCase = true; // Flag to handle output formatting
+int main(){
+    int t;
+    bool first =true;
 
-    // Read the input until EOF
-    while (cin >> timeAvailable >> totalTime) {
-        if (isFirstCase) {
-            isFirstCase = false;
-        } else {
-            cout << endl;  // Print a blank line between test cases
+    while(cin >> t >> w){
+        if (first){
+            first=false;
+        }
+        else{
+            cout << endl;
+        }
+        init();
+        cin >> n;
+        for(int i=0;i<n;i++){
+            cin >> depth[i] >> treasure[i];
+            cost[i]=depth[i]*3*w;
         }
 
-        // Initialize the DP arrays
-        initialize();
+        cout << dp(t,0) << endl;
 
-        cin >> totalTreasure; // Number of items available
-        for (int i = 0; i < totalTreasure; i++) {
-            cin >> goldDepth[i] >> treasureQuantity[i];
-            timeCost[i] = goldDepth[i] * 3 * totalTime; // Cost is based on depth and weight
-        }
-
-        // Compute the maximum treasure value that can be collected within the available time
-        cout << computeMaxTreasure(timeAvailable, 0) << endl;
-
-        // Find the items that were selected
-        vector<int> selectedItems;
-        int remainingTime = timeAvailable;
-        for (int i = 0; i < totalTreasure; i++) {
-            if (itemSelected[remainingTime][i]) {
-                selectedItems.push_back(i);
-                remainingTime -= timeCost[i];
+        vector<int> indexTaken;
+        int startTime=t;
+        for(int i=0;i<n;i++){
+            if(picked[startTime][i] == true){
+                indexTaken.push_back(i);
+                startTime = startTime - cost[i];
             }
         }
-
-        // Output the number of selected items
-        cout << selectedItems.size() << endl;
-
-        // Output the details of each selected item
-        for (int i = 0; i < selectedItems.size(); i++) {
-            cout << goldDepth[selectedItems[i]] << " " << treasureQuantity[selectedItems[i]] << endl;
+        cout << indexTaken.size() << endl;
+        for(int i=0;i<(int)indexTaken.size();i++){
+            cout << depth[indexTaken[i]] << " " << treasure[indexTaken[i]] << endl;
         }
     }
 

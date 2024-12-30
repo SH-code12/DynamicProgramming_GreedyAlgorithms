@@ -115,7 +115,7 @@ The minimum number of intervals required to complete all tasks.
 
 ---
 
-### Question 3: Valid Path in Graph
+### Question 3: Valid Path in Solution
 #### Description
 Determine whether there is a valid path between a source and a destination in a given undirected graph represented by its edges.
 
