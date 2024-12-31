@@ -1,0 +1,43 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#define MOD 1000000007
+
+using namespace std;
+
+int countOriginalStrings(const string& inp) {
+    int len = inp.length();
+
+    // Checking for invalid characters
+    for (char c : inp) {
+        if (c == 'm' || c == 'w') {
+            return 0;
+        }
+    }
+
+    // Dynamic programming array
+    vector<long long> dp(len + 1, 0);
+    // Base case: empty string
+    dp[0] = 1;
+
+    for (int i = 1; i <= len; ++i) {
+        // decode ways for Single character
+        dp[i] = dp[i - 1];
+
+        // Checking for 'uu' or 'nn'
+        if (i > 1 && ((inp[i - 1] == 'u' && inp[i - 2] == 'u') || (inp[i - 1] == 'n' && inp[i - 2] == 'n'))) {
+            dp[i] = (dp[i] + dp[i - 2]) % MOD;
+        }
+    }
+
+    return dp[len];
+}
+
+int main() {
+    string s;
+    cin >> s;
+
+    cout << countOriginalStrings(s) << endl;
+
+    return 0;
+}
