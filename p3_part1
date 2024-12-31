@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+void solveKnapsack() {
+    int n;
+    cin >> n;
+
+    while (n--) {
+        int K;    //maximum weight
+        int M; //  number of bags
+        cin >> K >> M;
+
+        vector<pair<int, int>> bags(M); //  storing weight and value of bags
+        for (int i = 0; i < M; ++i) {
+            cin >> bags[i].first >> bags[i].second;
+        }
+
+
+        vector<int> dp(K + 1, 0);
+
+        for (const auto& bag : bags) {
+            int weight = bag.first, value = bag.second;
+            for (int w = K; w >= weight; --w) {
+                dp[w] = max(dp[w], dp[w - weight] + value);
+            }
+        }
+
+
+        int max_value = *max_element(dp.begin(), dp.end());
+
+
+        cout << "Hey stupid robber, you can get " << max_value << "." << endl;
+    }
+}
+
+int main() {
+    solveKnapsack();
+    return 0;
+}
