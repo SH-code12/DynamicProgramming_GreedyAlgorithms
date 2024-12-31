@@ -1,0 +1,66 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+struct Treasure {
+    int de;
+    int amo;
+};
+
+int main() {
+    int t, w;
+    bool first = true;
+//take values
+    while (cin >> t >> w) {
+        if (!first) cout << endl;
+        first = false;
+
+        int n;
+        cin >> n;
+
+        vector<Treasure> treasures(n);
+        for (int i = 0; i < n; ++i) {
+            cin >> treasures[i].de >> treasures[i].amo;
+        }
+
+        // Maximum time John can spend underwater
+        vector<int> dp(t + 1, 0); //vector have time
+        vector<vector<bool>> selected(n, vector<bool>(t + 1, false)); //vector have boolean value
+
+        for (int i = 0; i < n; ++i) {
+            int timeRequired = 3 * w * treasures[i].de;
+            for (int j = t; j >= timeRequired; --j) {
+                if (dp[j - timeRequired] + treasures[i].amo > dp[j]) {
+                    dp[j] = dp[j - timeRequired] + treasures[i].amo;
+                    selected[i][j] = true;
+                }
+            }
+        }
+
+        // Backtrack to find the selected treasures
+        int maxGold = dp[t];
+        int remainingTime = t;
+        vector<Treasure> pickedTreasures;
+
+        for (int i = n - 1; i >= 0; --i) {
+            if (selected[i][remainingTime]) {
+                pickedTreasures.push_back(treasures[i]);
+                remainingTime -= 3 * w * treasures[i].de;
+            }
+        }
+
+        reverse(pickedTreasures.begin(), pickedTreasures.end());
+
+        // Output results
+        cout << maxGold << endl;
+        cout << pickedTreasures.size() << endl;
+        for (const auto& treasure : pickedTreasures) {
+            cout << treasure.de << " " << treasure.amo << endl;
+        }
+    }
+
+    return 0;
+}
