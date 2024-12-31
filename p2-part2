@@ -1,0 +1,48 @@
+#include <vector>
+#include <unordered_map>
+#include <algorithm>
+#include<iostream>
+using namespace std;
+
+class Solution {
+public:
+    int leastInterval(vector<char>& tasks, int n) {
+        // Count the frequency of each task
+        unordered_map<char, int> task_counts;
+        for (char task : tasks) {
+            task_counts[task]++;
+        }
+
+        // Find the maximum frequency
+        int max_freq = 0;
+        for (auto& pair : task_counts) {
+            max_freq = max(max_freq, pair.second);
+        }
+
+        // Count the number of tasks with the maximum frequency
+        int max_count = 0;
+        for (auto& pair : task_counts) {
+            if (pair.second == max_freq) {
+                max_count++;
+            }
+        }
+
+        // Calculate the minimum intervals required
+        int part_count = max_freq - 1;
+        int part_length = n - (max_count - 1);
+        int empty_slots = part_count * part_length;
+        int available_tasks = tasks.size() - max_freq * max_count;
+        int idles = max(0, empty_slots - available_tasks);
+
+        return tasks.size() + idles;
+    }
+};
+
+using namespace std;
+int main() {
+    Solution solution;
+    vector<char> tasks = {'A','C','A','B','D','B'};
+    int n = 1;
+  cout << "Minimum intervals required: " << solution.leastInterval(tasks, n) << endl;
+    return 0;
+}
